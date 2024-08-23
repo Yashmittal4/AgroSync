@@ -57,6 +57,86 @@ void saveUserToFile(const char *username, const char *password) {
     printf("User registered successfully.\n");
 }
 
+// Check conditions that entered values lie in the range of optimal values or not!
+void checkOptimalConditions(struct Plant *plant, float pH, float EC, int PPM, CheckCondition checkCondition) {
+    printf("\nOptimal conditions for %s:\n", plant->name);
+    printf("PH range: %.2f - %.2f\n", plant->optimal_pH_min, plant->optimal_pH_max);
+    printf("EC range: %.2f - %.2f mS/cm\n", plant->optimal_EC_min, plant->optimal_EC_max);
+    printf("PPM range: %d - %d\n", plant->optimal_PPM_min, plant->optimal_PPM_max);
+
+    if (checkCondition(pH, plant->optimal_pH_min, plant->optimal_pH_max)) {
+        printf("PH is within the optimal range.\n");
+    } else {
+        printf("PH is out of the optimal range!\n");
+    }
+
+    if (checkCondition(EC, plant->optimal_EC_min, plant->optimal_EC_max)) {
+        printf("EC is within the optimal range.\n");
+    } else {
+        printf("EC is out of the optimal range!\n");
+    }
+
+    if (checkCondition(PPM, plant->optimal_PPM_min, plant->optimal_PPM_max)) {
+        printf("PPM is within the optimal range.\n");
+    } else {
+        printf("PPM is out of the optimal range!\n");
+    }
+}
+
+
+// Find plant present in the database
+struct Plant* findPlant(struct Plant plants[], int numPlants, const char *name) {
+	int i;
+    for ( i = 0; i < numPlants; i++) {
+        if (strcasecmp(plants[i].name, name) == 0) {//case insensitive string comparision
+            return &plants[i];
+        }
+    }
+    return NULL;
+}
+
+
+
+// Function to load plant data from a file
+int loadPlantsFromFile(struct Plant plants[], const char *filename) {
+    int file = open(filename, O_RDONLY);
+    if (file < 0) {
+        perror("Error opening file");
+        return 0;
+    }
+
+    int numPlants = 0;
+    char buffer[MAX_LINE_LENGTH];
+    ssize_t bytesRead;
+
+    while ((bytesRead = read(file, buffer, sizeof(buffer) - 1)) > 0) {
+        buffer[bytesRead] = '\0';
+        char *line = strtok(buffer, "\n");
+        while (line) {
+            if (sscanf(line, "%[^,],%f,%f,%f,%f,%d,%d",
+                       plants[numPlants].name,
+                       &plants[numPlants].optimal_pH_min,
+                       &plants[numPlants].optimal_pH_max,
+                       &plants[numPlants].optimal_EC_min,
+                       &plants[numPlants].optimal_EC_max,
+                       &plants[numPlants].optimal_PPM_min,
+                       &plants[numPlants].optimal_PPM_max) == 7) {
+                toLowerCase(plants[numPlants].name); // Convert to lowercase for consistency
+                numPlants++;
+            }
+            line = strtok(NULL, "\n");
+        }
+    }
+
+    if (bytesRead < 0) {
+        perror("Error reading file");
+    }
+
+    close(file);
+    return numPlants;
+}
+
+
 // loading users file to match user is right
 int loadUsersFromFile(struct User users[], const char *filename) {
     int file = open(filename, O_RDONLY);
@@ -102,6 +182,27 @@ int authenticateUser(struct User users[], int numUsers, const char *username, co
     return 0; // Authentication failed
 }
 
+// Function to read data from a file using system calls
+void readDataFromFile() {
+    int file = open("plant_data.txt", O_RDONLY);
+    if (file < 0) {
+        perror("Error opening file");
+        return;
+    }
+
+    char buffer[MAX_LINE_LENGTH];
+    ssize_t bytesRead;
+    while ((bytesRead = read(file, buffer, sizeof(buffer) - 1)) > 0) {
+        buffer[bytesRead] = '\0'; // Null-terminate the buffer
+        write(STDOUT_FILENO, buffer, bytesRead);
+    }
+
+    if (bytesRead < 0) {
+        perror("Error reading file");
+    }
+
+    close(file);
+}
 
 
 
@@ -118,8 +219,17 @@ void displayMenu() {
 }
 int main(){
 	
+	struct Plant plants[MAX_PLANTS];
+    int numPlants = loadPlantsFromFile(plants, "plant_database.txt");
+	
 	struct User users[MAX_USERS];
     int numUsers = loadUsersFromFile(users, "user_data.txt");
+    
+    if (numPlants == 0) {
+        printf("No plant data loaded. Exiting...\n");
+        return 1;
+    }
+    
     char username[50], password[50];
     int authenticated = 0;
 
