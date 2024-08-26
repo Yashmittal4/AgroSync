@@ -39,6 +39,16 @@ void toLowerCase(char *str) {
     }
 }
 
+// Function to get user input for plant details
+void getUserInput(float *pH, float *EC, int *PPM) {
+    printf("Enter pH: ");
+    scanf("%f", pH);
+    printf("Enter EC (mS/cm): ");
+    scanf("%f", EC);
+    printf("Enter PPM: ");
+    scanf("%d", PPM);
+}
+
 // saving a new user to the file using system calls 
 void saveUserToFile(const char *username, const char *password) {
     int file = open("user_data.txt", O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR);
@@ -48,7 +58,7 @@ void saveUserToFile(const char *username, const char *password) {
     }
 
     char buffer[MAX_LINE_LENGTH];
-    int len = snprintf(buffer, sizeof(buffer), "%s,%s\n", username, password);
+    int len = snprintf(buffer, sizeof(buffer), "%s,%s\n", username, password);//The sprintf function in C is used for formatting strings and storing them in a specified character buffer. 
     if (write(file, buffer, len) != len) {
         perror("Error writing to file");
     }
