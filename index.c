@@ -94,6 +94,14 @@ void checkOptimalConditions(struct Plant *plant, float pH, float EC, int PPM, Ch
 }
 
 
+// Function pointer types for condition checking
+typedef int (*CheckCondition)(float, float, float);
+
+// Function to check if a value is within a range
+int checkWithinRange(float value, float min, float max) {
+    return (value >= min && value <= max);
+}
+
 // Find plant present in the database
 struct Plant* findPlant(struct Plant plants[], int numPlants, const char *name) {
 	int i;
