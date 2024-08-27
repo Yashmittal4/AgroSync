@@ -252,6 +252,33 @@ void displayMenu() {
     printf("6. Yield and Water Usage Comparison\n");
     printf("7. Exit\n");
 }
+
+//Function to compare resources and another things from traditional farming
+void compareYieldAndWaterUsage() {
+    float landArea;
+    printf("\nEnter the land area (in square meters): ");
+    scanf("%f", &landArea);
+
+    
+    float hydroYieldPerSqM = 4.5;  // kg
+    float hydroWaterUsagePerSqM = 50.0;  // liters
+    float traditionalYieldPerSqM = 2.5;  // kg
+    float traditionalWaterUsagePerSqM = 200.0;  // liters
+
+    float hydroYield = hydroYieldPerSqM * landArea;
+    float hydroWaterUsage = hydroWaterUsagePerSqM * landArea;
+    float traditionalYield = traditionalYieldPerSqM * landArea;
+    float traditionalWaterUsage = traditionalWaterUsagePerSqM * landArea;
+
+    printf("\nYield Comparison:\n");
+    printf("Hydroponic Farming: %.2f kg\n", hydroYield);
+    printf("Traditional Farming: %.2f kg\n", traditionalYield);
+
+    printf("\nWater Usage Comparison:\n");
+    printf("Hydroponic Farming: %.2f liters\n", hydroWaterUsage);
+    printf("Traditional Farming: %.2f liters\n", traditionalWaterUsage);
+}
+
 int main(){
 	
 	struct Plant plants[MAX_PLANTS];
