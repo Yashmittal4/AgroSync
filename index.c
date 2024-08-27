@@ -93,6 +93,23 @@ void checkOptimalConditions(struct Plant *plant, float pH, float EC, int PPM, Ch
     }
 }
 
+// Function to calculate PPM from EC
+int ECtoPPM(float EC, int scale) {
+    if (scale == 500)
+        return (int)(EC * 500);
+    else if (scale == 700)
+        return (int)(EC * 700);
+    return 0;
+}
+
+// Function to calculate EC from PPM
+float PPMtoEC(int PPM, int scale) {
+    if (scale == 500)
+        return (float)PPM / 500;
+    else if (scale == 700)
+        return (float)PPM / 700;
+    return 0;
+}
 
 // Function pointer types for condition checking
 typedef int (*CheckCondition)(float, float, float);
