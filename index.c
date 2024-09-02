@@ -111,6 +111,24 @@ float PPMtoEC(int PPM, int scale) {
     return 0;
 }
 
+// Function to save data to a file using system calls
+void saveDataToFile(const char *plantName, float pH, float EC, int PPM) {
+    int file = open("plant_data.txt", O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR);
+    if (file < 0) {
+        perror("Error opening file");
+        return;
+    }
+
+    char buffer[MAX_LINE_LENGTH];
+    int len = snprintf(buffer, sizeof(buffer), "Plant Name: %s\npH: %.2f\nEC: %.2f mS/cm\nPPM: %d\n\n", plantName, pH, EC, PPM);
+    if (write(file, buffer, len) != len) {
+        perror("Error writing to file");
+    }
+
+    close(file);
+    printf("Data saved successfully to plant_data.txt.\n");
+}
+
 // Function pointer types for condition checking
 typedef int (*CheckCondition)(float, float, float);
 
