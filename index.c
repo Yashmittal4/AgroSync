@@ -351,9 +351,69 @@ int main(){
     if (!authenticated) {
         return 1;
     }
+char plantName[50];
+    float pH, EC;
+    int PPM, scale;
+    struct Plant *selectedPlant = NULL;
 
-	
-	
-	
+    while (1) {
+        printf("Enter the plant type: ");
+        scanf("%s", plantName);
+        toLowerCase(plantName); 
+        selectedPlant = findPlant(plants, numPlants, plantName);
+
+        if (selectedPlant == NULL) {
+            printf("Plant not found!\n");
+            continue; 
+        } else {
+            printf("Plant '%s' found.\n", selectedPlant->name);
+            getUserInput(&pH, &EC, &PPM);
+            checkOptimalConditions(selectedPlant, pH, EC, PPM, checkWithinRange);
+        }
+
+        int choice;
+        do {
+            displayMenu();
+            printf("Enter your choice: ");
+            scanf("%d", &choice);
+
+            switch (choice) {
+                case 1:
+                    printf("\nOptimal conditions for %s:\n", selectedPlant->name);
+                    printf("pH: %.1f - %.1f\n", selectedPlant->optimal_pH_min, selectedPlant->optimal_pH_max);
+                    printf("EC: %.1f - %.1f mS/cm\n", selectedPlant->optimal_EC_min, selectedPlant->optimal_EC_max);
+                    printf("PPM: %d - %d\n", selectedPlant->optimal_PPM_min, selectedPlant->optimal_PPM_max);
+                    break;
+                case 2:
+                    printf("Enter EC value (mS/cm): ");
+                    scanf("%f", &EC);
+                    printf("Enter scale (500 or 700): ");
+                    scanf("%d", &scale);
+                    printf("PPM: %d\n", ECtoPPM(EC, scale));
+                    printf("Enter PPM value: ");
+                    scanf("%d", &PPM);
+                    printf("EC: %.2f mS/cm\n", PPMtoEC(PPM, scale));
+                    break;
+                case 3:
+                    saveDataToFile(plantName, pH, EC, PPM);
+                    break;
+                case 4:
+                    readDataFromFile();
+                    break;
+                case 5:
+                    
+                    break;
+                case 6:
+                    compareYieldAndWaterUsage();
+                    break;
+
+                case 7:
+                    printf("Exiting program.\n");
+                    return 0;
+                default:
+                    printf("Invalid choice! Please try again.\n");
+            }
+        } while (choice != 5); 
+    }
 	return 0;
 }
