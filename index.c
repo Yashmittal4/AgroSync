@@ -329,7 +329,7 @@ int main(){
 
         printf("Enter password: ");
         scanf("%s", password);
-	start_time = clock();
+	
 
         if (authenticateUser(users, numUsers, username, password)) {
             printf("Login successful.\n");
@@ -356,9 +356,7 @@ int main(){
     if (!authenticated) {
         return 1;
     }
-    end_time = clock();
-    cpu_time_used = ((double) (end_time - start_time)) / CLOCKS_PER_SEC;
-    printf("CPU Time Used for authentication for login: %f seconds\n", cpu_time_used);
+    
 char plantName[50];
     float pH, EC;
     int PPM, scale;
@@ -403,7 +401,11 @@ char plantName[50];
                     printf("EC: %.2f mS/cm\n", PPMtoEC(PPM, scale));
                     break;
                 case 3:
+		    start_time = clock();
                     saveDataToFile(plantName, pH, EC, PPM);
+		    end_time = clock();
+                    cpu_time_used = ((double) (end_time - start_time)) / CLOCKS_PER_SEC;
+                    printf("CPU Time Used for saving data into file: %f seconds\n", cpu_time_used);
                     break;
                 case 4:
                     readDataFromFile();
