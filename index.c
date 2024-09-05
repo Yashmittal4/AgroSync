@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include<time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -298,6 +299,8 @@ void compareYieldAndWaterUsage() {
 }
 
 int main(){
+	clock_t start_time, end_time;
+    double cpu_time_used;
 	
 	struct Plant plants[MAX_PLANTS];
     int numPlants = loadPlantsFromFile(plants, "plant_database.txt");
@@ -326,6 +329,7 @@ int main(){
 
         printf("Enter password: ");
         scanf("%s", password);
+	start_time = clock();
 
         if (authenticateUser(users, numUsers, username, password)) {
             printf("Login successful.\n");
@@ -333,6 +337,7 @@ int main(){
         } else {
             printf("Invalid username or password.\n");
         }
+	    end_time = clock();
     } else if (authChoice == 2) {
         printf("Enter new username: ");
         scanf("%s", username);
@@ -351,6 +356,9 @@ int main(){
     if (!authenticated) {
         return 1;
     }
+    end_time = clock();
+    cpu_time_used = ((double) (end_time - start_time)) / CLOCKS_PER_SEC;
+    printf("CPU Time Used for authentication for login: %f seconds\n", cpu_time_used);
 char plantName[50];
     float pH, EC;
     int PPM, scale;
