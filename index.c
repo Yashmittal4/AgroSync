@@ -299,13 +299,13 @@ void compareYieldAndWaterUsage() {
 }
 
 int main(){
-	clock_t start_time, end_time;
-    double cpu_time_used;
+    clock_t start_time, end_time;
+    double cpu_time_used,cpu_time_used_read;
 	
-	struct Plant plants[MAX_PLANTS];
+    struct Plant plants[MAX_PLANTS];
     int numPlants = loadPlantsFromFile(plants, "plant_database.txt");
 	
-	struct User users[MAX_USERS];
+    struct User users[MAX_USERS];
     int numUsers = loadUsersFromFile(users, "user_data.txt");
     
     if (numPlants == 0) {
@@ -408,7 +408,11 @@ char plantName[50];
                     printf("CPU Time Used for saving data into file: %f seconds\n", cpu_time_used);
                     break;
                 case 4:
+		    start_time = clock();
                     readDataFromFile();
+		    end_time = clock();
+                    cpu_time_used_read = ((double) (end_time - start_time)) / CLOCKS_PER_SEC;
+                    printf("CPU Time Used for reading data into file: %f seconds\n", cpu_time_used_read);	
                     break;
                 case 5:
                     
